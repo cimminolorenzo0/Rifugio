@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lorenzo Karol Cimmino</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --outside: #0d0d0d;
+            --ember: #e6007e;
+        }
+
+        html,
+        body {
+            width: 100%;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            background-color: var(--outside);
+            color: #ffffff;
+            font-family: "Space Grotesk", sans-serif;
+        }
+
+        /* ===== MENU ===== */
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 10px 18px;
+            border: 1px solid #333;
+            background: rgba(17, 17, 17, 0.9);
+            color: #fff;
+            font: inherit;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+        }
+
+        .menu-toggle:hover {
+            border-color: var(--ember);
+            background: var(--ember);
+        }
+
+        .overlay-menu {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            background: rgba(13, 13, 13, 0.98);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .overlay-menu.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .overlay-menu ul {
+            list-style: none;
+            text-align: center;
+        }
+
+        .overlay-menu li {
+            margin: 20px 0;
+        }
+
+        .overlay-menu a {
+            color: #fff;
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .overlay-menu a:hover {
+            color: var(--ember);
+        }
+
+        /* ===== SEZIONI ===== */
+        section {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100vw;
+            min-height: 100vh;
+            min-height: 100dvh;
+            background-color: var(--outside);
+        }
+
+        .art-img {
+            display: block;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            object-fit: contain;
+        }
+
+        /* ===== PRIMA PAGINA — TORCIA INTERATTIVA ===== */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow: hidden;
+            background: var(--outside);
+            isolation: isolate;
+            touch-action: pan-y;
+        }
+
+        .hero-photo {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background-image: url("./2.png?v=2");
+            background-position: center;
+            background-size: cover;
+            filter: grayscale(45%) brightness(0.75);
+        }
+
+        /* A torcia spenta la foto resta visibile normalmente. */
+        .hero-veil {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: var(--outside);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+
+        .hero-glow {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            opacity: 0;
+            pointer-events: none;
+            background: radial-gradient(
+                circle 240px at var(--mx, 50%) var(--my, 38%),
+                rgba(231, 163, 92, 0.16),
+                transparent 70%
+            );
+            transition: opacity 0.35s ease;
+        }
+
+        /* Quando la torcia è accesa viene applicata la maschera. */
+        .hero.torch-on .hero-veil {
+            opacity: 1;
+            -webkit-mask-image: radial-gradient(
+                circle 220px at var(--mx, 50%) var(--my, 38%),
+                transparent 0%,
+                transparent 35%,
+                black 72%
+            );
+            mask-image: radial-gradient(
+                circle 220px at var(--mx, 50%) var(--my, 38%),
+                transparent 0%,
+                transparent 35%,
+                black 72%
+            );
+        }
+
+        .hero.torch-on .hero-glow {
+            opacity: 1;
+        }
+
+        /* ===== TASTO TORCIA ===== */
+        .torch-toggle {
+            position: absolute;
+            right: clamp(20px, 4vw, 50px);
+            bottom: clamp(20px, 4vw, 50px);
+            z-index: 10;
+            display: grid;
+            place-items: center;
+            width: 76px;
+            height: 76px;
+            padding: 0;
+            border: 0;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.38);
+            cursor: pointer;
+            backdrop-filter: blur(7px);
+            transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .torch-toggle img {
+            display: block;
+            width: 58px;
+            height: 58px;
+            object-fit: contain;
+            pointer-events: none;
+        }
+
+        .torch-toggle:hover {
+            transform: scale(1.08);
+            background: rgba(230, 0, 126, 0.55);
+        }
+
+        .torch-toggle:focus-visible {
+            outline: 3px solid #fff;
+            outline-offset: 5px;
+        }
+
+        .hero.torch-on .torch-toggle {
+            background: rgba(230, 0, 126, 0.72);
+            box-shadow: 0 0 28px rgba(230, 0, 126, 0.45);
+        }
+
+        .torch-label {
+            position: absolute;
+            right: clamp(20px, 4vw, 50px);
+            bottom: calc(clamp(20px, 4vw, 50px) + 86px);
+            z-index: 10;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.55);
+            color: #fff;
+            font-size: 0.7rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            pointer-events: none;
+            backdrop-filter: blur(5px);
+        }
+
+        @media (max-width: 768px) {
+            .art-img {
+                width: 100%;
+                height: auto;
+                max-height: 90vh;
+            }
+
+            .hero.torch-on .hero-veil {
+                -webkit-mask-image: radial-gradient(
+                    circle 150px at var(--mx, 50%) var(--my, 42%),
+                    transparent 0%,
+                    transparent 35%,
+                    black 75%
+                );
+                mask-image: radial-gradient(
+                    circle 150px at var(--mx, 50%) var(--my, 42%),
+                    transparent 0%,
+                    transparent 35%,
+                    black 75%
+                );
+            }
+
+            .hero-glow {
+                background: radial-gradient(
+                    circle 165px at var(--mx, 50%) var(--my, 42%),
+                    rgba(231, 163, 92, 0.18),
+                    transparent 72%
+                );
+            }
+
+            .torch-toggle {
+                width: 66px;
+                height: 66px;
+            }
+
+            .torch-toggle img {
+                width: 50px;
+                height: 50px;
+            }
+
+            .torch-label {
+                bottom: calc(clamp(20px, 4vw, 50px) + 76px);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+
+            *,
+            *::before,
+            *::after {
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="menu-toggle" id="menuBtn" type="button">Menu</button>
+
+    <nav class="overlay-menu" id="overlayMenu" aria-label="Navigazione principale">
+        <ul>
+            <li><a href="#sezione-1" class="menu-link">01</a></li>
+            <li><a href="#sezione-2" class="menu-link">02</a></li>
+            <li><a href="#sezione-3" class="menu-link">03</a></li>
+            <li><a href="#sezione-4" class="menu-link">04</a></li>
+            <li><a href="#sezione-5" class="menu-link">05</a></li>
+        </ul>
+    </nav>
+
+    <!-- 01. PAESAGGIO CON TORCIA -->
+    <section id="sezione-1" class="hero">
+        <div class="hero-photo" role="img" aria-label="Paesaggio"></div>
+        <div class="hero-veil" aria-hidden="true"></div>
+        <div class="hero-glow" aria-hidden="true"></div>
+
+      
+
+        <button
+            class="torch-toggle"
+            id="torchBtn"
+            type="button"
+            
+            aria-pressed="false"
+        >
+            <img src="./torchbutton.png" alt="">
+        </button>
+    </section>
+
+    <!-- 02. VOLTO + STATEMENT -->
+    <section id="sezione-2">
+        <img src="./3.png?v=2" alt="Volto e Statement" class="art-img">
+    </section>
+
+    <!-- 03. RIFUGIO MAPPA -->
+    <section id="sezione-3">
+        <img src="./4.png?v=2" alt="Rifugio" class="art-img">
+    </section>
+
+    <!-- 04. RITRATTO ARTISTA -->
+    <section id="sezione-4">
+        <img src="./8.png?v=2" alt="Ritratto e Ricerca" class="art-img">
+    </section>
+
+    <!-- 05. FALENA ROSA -->
+    <section id="sezione-5">
+        <img src="./9.png?v=2" alt="Falena" class="art-img">
+    </section>
+
+    <script>
+        /* ===== MENU ===== */
+        const menuBtn = document.getElementById("menuBtn");
+        const overlayMenu = document.getElementById("overlayMenu");
+        const menuLinks = document.querySelectorAll(".menu-link");
+
+        menuBtn.addEventListener("click", () => {
+            overlayMenu.classList.toggle("active");
+            menuBtn.innerText = overlayMenu.classList.contains("active")
+                ? "Chiudi"
+                : "Menu";
+        });
+
+        menuLinks.forEach((link) => {
+            link.addEventListener("click", () => {
+                overlayMenu.classList.remove("active");
+                menuBtn.innerText = "Menu";
+            });
+        });
+
+        /* ===== TORCIA INTERATTIVA ===== */
+        const hero = document.getElementById("sezione-1");
+        const torchBtn = document.getElementById("torchBtn");
+        const torchLabel = document.getElementById("torchLabel");
+
+        let torchIsOn = false;
+
+        function updateTorchPosition(clientX, clientY) {
+            if (!torchIsOn) return;
+
+            const rect = hero.getBoundingClientRect();
+            const x = ((clientX - rect.left) / rect.width) * 100;
+            const y = ((clientY - rect.top) / rect.height) * 100;
+
+            const safeX = Math.min(100, Math.max(0, x));
+            const safeY = Math.min(100, Math.max(0, y));
+
+            hero.style.setProperty("--mx", `${safeX}%`);
+            hero.style.setProperty("--my", `${safeY}%`);
+        }
+
+        torchBtn.addEventListener("click", () => {
+            torchIsOn = !torchIsOn;
+            hero.classList.toggle("torch-on", torchIsOn);
+            torchBtn.setAttribute("aria-pressed", String(torchIsOn));
+            torchBtn.setAttribute(
+                "aria-label",
+                torchIsOn
+                  
+            );
+            
+        });
+
+        hero.addEventListener("pointermove", (event) => {
+            updateTorchPosition(event.clientX, event.clientY);
+        });
+
+        hero.addEventListener("pointerdown", (event) => {
+            updateTorchPosition(event.clientX, event.clientY);
+        });
+    </script>
+</body>
+</html>
